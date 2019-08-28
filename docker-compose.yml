@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  mymongo:
+    container_name: mymongo
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongoData:/data/db
+  mymysql:
+    container_name: mymysql
+    image: 'mysql:5.7'
+    restart: always
+    environment:
+        MYSQL_HOST: localhost
+        MYSQL_DATABASE: sims
+        # MYSQL_USER: user
+        # MYSQL_PASSWORD: 1234
+        MYSQL_ROOT_PASSWORD: root
+    ports:
+        - "127.0.0.1:3306:3306"
+    expose:
+        - 3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+  myredis:
+    container_name: myredis
+    image: 'bitnami/redis:latest'
+    ports:
+      - "127.0.0.1:6379:6379"
+    expose:
+      - 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+  zookeeper:
+    container_name: myzookeeper
+    image: wurstmeister/zookeeper
+  kafka:
+    container_name: mykafka
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  # app:
+  #   container_name: express
+  #   restart: always
+  #   #build: .
+  #   image: sudoak/productsapp_app:latest
+  #   ports:
+  #     - "1235:1234"
+  #   depends_on:
+  #     - mymongo
+volumes:
+  mongoData:
+  mysql-data:
